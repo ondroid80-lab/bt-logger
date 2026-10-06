@@ -55,6 +55,10 @@ class MainActivity : Activity() {
         super.onResume()
         LogStore.listener = { refresh() }
         refresh()
+        // Log (označitelný text) si jinak vezme fokus a obrazovka sjede dolů,
+        // takže tlačítko Spustit záznam není vidět.
+        val scroll = findViewById<android.widget.ScrollView>(R.id.scroll)
+        scroll.post { scroll.scrollTo(0, 0) }
     }
 
     override fun onPause() {
@@ -67,6 +71,9 @@ class MainActivity : Activity() {
     private fun refresh() {
         val running = LoggerService.running
         btnToggle.text = if (running) "Zastavit záznam" else "Spustit záznam"
+        btnToggle.backgroundTintList = android.content.res.ColorStateList.valueOf(
+            if (running) 0xFFC62828.toInt() else 0xFF2E7D32.toInt()
+        )
 
         val sb = StringBuilder()
         sb.append("Záznam: ").append(if (running) "BĚŽÍ ✅" else "zastaven").append('\n')
