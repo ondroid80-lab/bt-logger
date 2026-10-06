@@ -35,6 +35,24 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        // Android 15+ kreslí obsah až k okraji displeje (pod stavový řádek).
+        // Odsadíme ho, aby horní tlačítko nebylo schované.
+        val root = findViewById<ScrollView>(R.id.scroll)
+        root.setOnApplyWindowInsetsListener { v, insets ->
+            val top: Int
+            val bottom: Int
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val b = insets.getInsets(android.view.WindowInsets.Type.systemBars())
+                top = b.top; bottom = b.bottom
+            } else {
+                @Suppress("DEPRECATION")
+                top = insets.systemWindowInsetTop
+                @Suppress("DEPRECATION")
+                bottom = insets.systemWindowInsetBottom
+            }
+            v.setPadding(0, top, 0, bottom)
+            insets
+        }
         status = findViewById(R.id.status)
         logView = findViewById(R.id.log)
         btnToggle = findViewById(R.id.btnToggle)
